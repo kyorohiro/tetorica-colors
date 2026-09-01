@@ -5378,7 +5378,7 @@ dependencies = [
 
 [[package]]
 name = "tetorica-colors"
-version = "0.15.5"
+version = "0.15.7"
 dependencies = [
  "chrono",
  "core-foundation 0.10.1",

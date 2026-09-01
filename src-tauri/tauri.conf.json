@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "tetorica-colors",
-  "version": "0.15.5",
+  "version": "0.15.7",
   "identifier": "net.tetorica.colors",
   "build": {
     "beforeDevCommand": "npm run dev",
