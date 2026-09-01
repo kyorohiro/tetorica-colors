@@ -1,5 +1,3 @@
-mod color_analysis;
-mod color_pallet;
 mod screen_capture;
 use std::io::Cursor;
 use tauri::ipc::Response;
@@ -17,7 +15,6 @@ pub fn run() {
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .invoke_handler(tauri::generate_handler![
             greet,
-            analyze_region_colors,
             check_screen_capture_permission,
             request_screen_capture_permission,
             open_privacy_settings,
@@ -55,22 +52,6 @@ fn capture_and_crop_bytes(
 
     Ok(Response::new(buf))
 }
-
-//
-//
-//
-#[tauri::command]
-async fn analyze_region_colors(
-    x: i32,
-    y: i32,
-    width: u32,
-    height: u32,
-    quantize_step: Option<u8>,
-    top_n: Option<usize>,
-) -> Result<crate::color_analysis::ColorAnalysisResult, String> {
-    crate::color_analysis::analyze_region_colors(x, y, width, height, quantize_step, top_n).await
-}
-
 
 #[cfg(target_os = "macos")]
 use core_foundation::{

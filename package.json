@@ -4,12 +4,13 @@
   "version": "0.15.2",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "npm run build:wasm && vite",
+    "build:wasm": "node scripts/build-wasm.mjs",
     "build-sw": "node scripts/build-sw.mjs",
-    "build": "npm run build-sw && tsc && vite build",
-    "build:gh": "npm run build-sw && tsc && vite build --base=/tetorica-colors/demo/",
-    "build:itch": "npm run build-sw && tsc && vite build --base=./",
-    "build:web": "npm run build-sw && tsc && vite build --base=./",
+    "build": "npm run build-sw && npm run build:wasm && tsc && vite build",
+    "build:gh": "npm run build-sw && npm run build:wasm && tsc && vite build --base=/tetorica-colors/demo/",
+    "build:itch": "npm run build-sw && npm run build:wasm && tsc && vite build --base=./",
+    "build:web": "npm run build-sw && npm run build:wasm && tsc && vite build --base=./",
     "preview": "vite preview",
     "tauri": "tauri",
     "tauri:dev": "tauri dev"

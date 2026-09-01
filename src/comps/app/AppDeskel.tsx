@@ -11,7 +11,6 @@ import { draw, resizeCanvas } from "../../algos/deskel";
 import { useAppState, appState } from "../../state";
 import {
   captureAndCrop,
-  captureAndCropToAnalysis,
   ColorCount,
 } from "../../natives/nativeScreenshot";
 import { showToast } from "../utils/toast";
@@ -20,7 +19,7 @@ import { openPrivacySettings } from "../../natives/nativePermissionCheck";
 import { getRectFromPoints } from "../../algos/utils";
 import { getTaurPlatformInfo } from "../../natives/native";
 import { AppBackgroundImageCanvasHandle } from "./AppBackgroundImageCanvas";
-import { analyzeImageBlob } from "../../algos/colorAnalysis";
+import { analyzeColorBlob } from "../../algos/colorAnalysisWorker";
 
 import type {
   AppDeskelPoint,
@@ -185,7 +184,7 @@ const AppDeslel = forwardRef<
         return;
       }
 
-      const ret = await analyzeImageBlob(cropResult.blob, 32, 1000);
+      const ret = await analyzeColorBlob(cropResult.blob);
       await props.onColorAnalysis?.(ret.colors, ret.colors01);
     },
     [props.appBackgroundImageCanvasRef, props.onColorAnalysis],
@@ -193,9 +192,11 @@ const AppDeslel = forwardRef<
 
   const analyzeFromScreen = useCallback(async (selectedRect: SelectionRect) => {
     await props.onBeforeCapture?.();
-    const ret = await captureAndCropToAnalysis({
+    const capture = await captureAndCrop({
       targetRect: selectedRect,
+      hideWindow: true,
     });
+    const ret = await analyzeColorBlob(new Blob([capture.pngBuffer], { type: "image/png" }));
     await props.onColorAnalysis?.(ret.colors, ret.colors01);
   }, [props.onBeforeCapture, props.onColorAnalysis]);
 

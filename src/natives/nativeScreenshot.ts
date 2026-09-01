@@ -4,29 +4,7 @@ import { getTaurPlatformInfo } from "./native";
 //import { waitNextFrame } from "./utils";
 
 const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
-export type ColorCount = {
-  r: number;
-  g: number;
-  b: number;
-  hex: string;
-  count: number;
-  ratio: number;
-  hue: number;  // 0..360
-  hue_angle: number;      // 色相環用
-  hsl_saturation: number; // 0..1
-  lightness: number;      // 0..1
-  hsv_saturation: number; // 0..1
-  value: number;         // 0..1
-};
-
-type ColorAnalysisResult = {
-  width: number;
-  height: number;
-  total_pixels: number;
-  colors: ColorCount[];
-  colors01: ColorCount[]; // 候補
-};
-
+export type { ColorCount } from "../algos/colorAnalysis";
 
 type TargetRect = {
   x: number;
@@ -34,63 +12,6 @@ type TargetRect = {
   width: number;
   height: number;
 };
-
-// targetRect :  window/canvas 内の CSS px 座標
-export async function captureAndCropToAnalysis(params: { targetRect?: TargetRect | null; }) {
-  console.log("> captureAndCropToAnaluze", params);
-  const appWindow = getCurrentWindow()
-
-  const caputureRect = await calcCaptureAndCropParams({ targetRect: params.targetRect });
-  //const toolbar = document.getElementById("toolbar")
-  try {
-    //if (toolbar != null) {
-    //  toolbar.style.display = "none";
-    //}
-    //await sleep(300);
-    // 
-    // mac だと 透明にしてゴーストが残ることがあるので Window を非表示にする
-    //
-    await appWindow.hide()
-
-    // visibleがfalseになるまで待つ
-    for (let i = 0; i < 10; i++) {
-      const visible = await appWindow.isVisible()
-      if (!visible) break
-      await new Promise(r => setTimeout(r, 16))
-    }
-
-    // 念のため1フレーム
-    //await waitNextFrame(1)
-    await sleep(25);
-
-    const result = await invoke<ColorAnalysisResult>("analyze_region_colors", {
-      x: caputureRect.x,
-      y: caputureRect.y,
-      width: caputureRect.width,
-      height: caputureRect.height,
-      quantizeStep: 32,
-      topN: 1000,
-    });
-    console.log(">> result", result);
-    return result;
-  } catch (e) {
-    console.log(e);
-    if (typeof e === "string") {
-      throw new Error(e);
-    } else if (e instanceof Error) {
-      throw e;
-    } else {
-      throw new Error(JSON.stringify(e));
-    }
-  } finally {
-    //if (toolbar) {
-    //  toolbar.style.display = ""
-    //}
-    await appWindow.show()
-  }
-  //appWindow.setDecorations(true);
-}
-
 
 export type ScreenCaptureImage = {
   path: string;
