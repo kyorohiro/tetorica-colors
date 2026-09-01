@@ -4,9 +4,10 @@ import { useDialog } from "../utils/useDialog";
 import { AppBackgroundImageCanvasHandle, useBackgroundImageState } from "./AppBackgroundImageCanvas";
 import { isPwaDistributionLocation } from "../../natives/pwa";
 import { getVideo } from "../../natives/nativeWebScreenshot";
+import { appState } from "../../state";
 
 export type AppImportImageHandle = {
-    handleImportImage: () => Promise<void>;
+    handleImportImage: () => Promise<boolean>;
     handleImportScreen: () => Promise<void>;
 };
 
@@ -24,14 +25,17 @@ export const AppImportImage = forwardRef<AppImportImageHandle,  AppImportImagePr
         props.onChangeState?.();
     };
 
-    const handleImportImage = async () => {
+    const handleImportImage = async (): Promise<boolean> => {
         const ret = await dialog.showFileDialog({});
         if (props.appBackgroundImageCanvasRef?.current) {
             if (ret?.files && ret.files.length > 0) {
                 await props.appBackgroundImageCanvasRef.current.addImage(ret.files[0]);
+                appState.setTarget("image");
                 syncBackgroundImageState()
+                return true;
             }
         }
+        return false;
     };
 
     const handleImportScreen = async () => {

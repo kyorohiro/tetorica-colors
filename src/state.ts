@@ -53,7 +53,7 @@ const DEFAULT_SETTINGS: Settings = {
     captureMode: "lightness"
 }
 
-const SETTINGS_KEY = "tetorica-deskel-settings"
+const SETTINGS_KEY = "tetorica-colors-settings"
 
 function loadSettings(): Settings {
     console.log("> loadSettings")
@@ -144,7 +144,7 @@ class AppStateStore {
             alwaysOnTop: false,
             target: "screen",
             rotation: saved.rotation,
-            tool: "measure",
+            tool: "color",
             measureUnit: saved.measureUnit,
             measureUnitSet: saved.measureUnitSet,
             captureMode: saved.captureMode,

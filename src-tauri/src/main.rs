@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    tetorica_deskel_lib::run()
+    tetorica_colors_lib::run()
 }

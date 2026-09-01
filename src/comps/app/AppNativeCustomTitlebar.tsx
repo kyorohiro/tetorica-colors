@@ -28,7 +28,7 @@ export function CustomTitlebar() {
       className="select-non flex h-10 items-center justify-between border-b border-slate-700 bg-slate-900/95 px-2 text-slate-100 select-none"
     >
       <div data-tauri-drag-region className="flex items-center gap-2 px-2 text-sm font-medium">
-        <span data-tauri-drag-region id="custom-title-bar-value" className="select-non text-slate-300">Tetorica Deskel</span>
+        <span data-tauri-drag-region id="custom-title-bar-value" className="select-non text-slate-300">Tetorica Colors</span>
       </div>
 
       <div className="flex items-center gap-1">

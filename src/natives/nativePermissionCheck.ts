@@ -61,7 +61,7 @@ async function ensureScreenCapturePermission(props: { showToast: (msg: string) =
     title: "Screen Capture Reset Required",
     body:
       "Please go to Settings -> Privacy & Security -> Screen Recording & System Audio.\n\n" +
-      "IMPORTANT: You must select 'tetorica-deskel' and click the '-' (minus) button to remove it first, then click '+' to add it back.\n\n" +
+      "IMPORTANT: You must select 'tetorica-colors' and click the '-' (minus) button to remove it first, then click '+' to add it back.\n\n" +
       "Simply toggling it Off and On will NOT work.",
   });
 

@@ -1,5 +1,5 @@
 const APP_VERSION = "0.15.2";
-const CACHE_PREFIX = "tetorica-deskel-";
+const CACHE_PREFIX = "tetorica-colors-";
 const CACHE_NAME = `${CACHE_PREFIX}${APP_VERSION}`;
 
 const APP_SHELL = [

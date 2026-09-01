@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "tetorica-deskel",
+  "productName": "tetorica-colors",
   "version": "0.15.2",
-  "identifier": "net.tetorica.deskel",
+  "identifier": "net.tetorica.colors",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -14,7 +14,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "Tetorica Deskel",
+        "title": "Tetorica Colors",
         "width": 800,
         "height": 600,
         "transparent": true,

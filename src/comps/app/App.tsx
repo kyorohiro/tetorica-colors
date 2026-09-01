@@ -8,21 +8,17 @@ import { AppToolbar } from "../toolbar/AppToolbar";
 import { AppDeslel } from "./AppDeskel";
 import type { AppDeskelHandle } from "./AppDeskel";
 import { AppColorAnalysis, AppColorAnalysisHandle } from "./AppColorAnalysis";
-import { AppSimpleDrawCanvas } from "./AppSimpleDrawCanvas";
 import { ColorCount } from "../../natives/nativeScreenshot";
 import { useAppState, appState } from "../../state";
-import ScreenCaptureCanvas, { ScreenCaptureCanvasHandle } from "./AppScreenCaptureCanvas";
 import { getAppWindow, isTauri } from "../../natives/native";
 import { AppBackgroundImageCanvas, AppBackgroundImageCanvasHandle } from "./AppBackgroundImageCanvas";
 import { AppImportImage, AppImportImageHandle } from "./AppImportImage";
-import CameraDeskel from "./AppCameraDeskel";
 
 export default function App() {
   const deskelRef = useRef<AppDeskelHandle | null>(null);
   const appImportImageRef = useRef<AppImportImageHandle | null>(null);
   const colorAnalysisRef = useRef<AppColorAnalysisHandle | null>(null);
   const appBackgroundImageCanvasRef = useRef<AppBackgroundImageCanvasHandle | null>(null);
-  const appScreenCaptureCanvas = useRef<ScreenCaptureCanvasHandle| null> (null);
   const state = useAppState();
 
   useEffect(() => {
@@ -89,29 +85,21 @@ export default function App() {
   }, []);
 
   return (
-    <div id="app" className="relative w-screen h-screen">
-      {
-        <div className="" >
-          <AppBackgroundImageCanvas ref={appBackgroundImageCanvasRef} />
-        </div>
-      }
-      <div className="absolute inset-0 z-10">
-        <ScreenCaptureCanvas ref={appScreenCaptureCanvas} image={state.captureImage} mode={state.captureMode} />
+    <div
+      id="app"
+      className={`relative h-screen w-screen ${
+        state.target === "image" ? "bg-[#192325]" : ""
+      }`}
+    >
+      <div className={state.target === "image" ? "" : "invisible"}>
+        <AppBackgroundImageCanvas ref={appBackgroundImageCanvasRef} />
       </div>
-
-
       <div className="absolute inset-0 z-20">
-        <AppDeslel ref={deskelRef} onColorAnalysis={onColorAnalysis} appBackgroundImageCanvasRef={appBackgroundImageCanvasRef} appScreenCaptureCanvasRef={appScreenCaptureCanvas} />
+        <AppDeslel ref={deskelRef} onColorAnalysis={onColorAnalysis} appBackgroundImageCanvasRef={appBackgroundImageCanvasRef} />
       </div>
 
       <div className={`absolute inset-0 z-30 ${state.tool === "color" ? "pointer-events-none" : "pointer-events-none"}`}>
         <AppColorAnalysis ref={colorAnalysisRef} />
-      </div>
-
-      <div
-        className={`absolute inset-0 z-40 ${state.tool === "draw" ? "pointer-events-auto" : "pointer-events-none"}`}
-      >
-        <AppSimpleDrawCanvas  />
       </div>
 
       <div className="absolute top-0 left-0 z-44">
@@ -120,14 +108,6 @@ export default function App() {
 
       <div className="absolute top-0 left-0 z-50">
         <AppToolbar onChangeState={onChangeStateForToolbar} appBackgroundImageCanvasRef={appBackgroundImageCanvasRef} appColorAnalysisRef={colorAnalysisRef} appImportImageRef={appImportImageRef} />
-      </div>
-
-
-
-      <div
-        className={`absolute inset-0 z-48 ${state.tool === "deskel" ? "pointer-events-auto" : "pointer-events-none"}`}
-      >
-        <CameraDeskel appBackgroundImageCanvasRef={appBackgroundImageCanvasRef} />
       </div>
     </div>
   );

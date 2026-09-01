@@ -21,12 +21,6 @@ import { getRectFromPoints } from "../../algos/utils";
 import { getTaurPlatformInfo } from "../../natives/native";
 import { AppBackgroundImageCanvasHandle } from "./AppBackgroundImageCanvas";
 import { analyzeImageBlob } from "../../algos/colorAnalysis";
-import { AppDeskelMeasureToolbar } from "../toolbar/AppDeskelMeasureToolbar";
-import { AppDeskelImageToolbar } from "../toolbar/AppDeskelImageToolbar";
-import {
-  AppDeskelCaptureToolbar,
-  AppDeskelCaptureMode,
-} from "../toolbar/AppDeskelCaptureToolbar";
 
 import type {
   AppDeskelPoint,
@@ -36,10 +30,7 @@ import type {
   QuadMode,
   SelectionRect,
 } from "./appDeskelImpl/DeskelToolHandler";
-import { MeasureHandler } from "./appDeskelImpl/MeasureHandler";
-import { CaptureHandler } from "./appDeskelImpl/CaptureHandler";
 import { ColorHandler } from "./appDeskelImpl/ColorHandler";
-import { ScreenCaptureCanvasHandle } from "./AppScreenCaptureCanvas";
 
 type AppDeskelHandle = {
   redraw: (props?: { isResizeCanvas: boolean }) => void;
@@ -56,7 +47,6 @@ const AppDeslel = forwardRef<
     ) => Promise<void>;
     onBeforeCapture?: () => Promise<void>;
     appBackgroundImageCanvasRef: RefObject<AppBackgroundImageCanvasHandle | null>;
-    appScreenCaptureCanvasRef: RefObject<ScreenCaptureCanvasHandle|null>;
   }
 >(function AppDeslel(props, ref) {
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -67,20 +57,14 @@ const AppDeslel = forwardRef<
   const draggingRef = useRef(false);
   const [, setDragging] = useState(false);
 
-  const [measureMode, setMeasureMode] = useState<MeasureMode>("line");
-  const [quadMode, setQuadMode] = useState<QuadMode>("off");
+  const measureMode: MeasureMode = "line";
+  const quadMode: QuadMode = "off";
   const [isMac, setIsMac] = useState(false);
 
   const dialog = useDialog();
   const uAppState = useAppState();
 
-  const measureHandlerRef = useRef(new MeasureHandler());
-  const captureHandlerRef = useRef(new CaptureHandler());
   const colorHandlerRef = useRef(new ColorHandler());
-
-  const [captureToolbarOpen, setCaptureToolbarOpen] = useState(true);
-  const [measureToolbarOpen, setMeasureToolbarOpen] = useState(true);
-  const [imageToolbarOpen, setImageToolbarOpen] = useState(true);
   
 
   const setDraggingValue = useCallback((value: boolean) => {
@@ -113,7 +97,7 @@ const AppDeslel = forwardRef<
       title: "Screen Capture Reset Required",
       body:
         "Please go to Settings -> Privacy & Security -> Screen Recording & System Audio.\n\n" +
-        "IMPORTANT: You must select 'tetorica-deskel' and click the '-' (minus) button to remove it first, then click '+' to add it back.\n\n" +
+        "IMPORTANT: You must select 'tetorica-colors' and click the '-' (minus) button to remove it first, then click '+' to add it back.\n\n" +
         "Simply toggling it Off and On will NOT work.\r\n" +
         "Move to settings now?",
     });
@@ -237,11 +221,8 @@ const AppDeslel = forwardRef<
   }, []);
 
   const getCurrentHandler = useCallback((): DeskelToolHandler => {
-    const tool = uAppState.tool;
-    if (tool === "measure") return measureHandlerRef.current;
-    if (tool === "capture") return captureHandlerRef.current;
     return colorHandlerRef.current;
-  }, [uAppState.tool]);
+  }, []);
 
   const createToolContext = useCallback(
     (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D): DeskelToolContext => {
@@ -413,26 +394,9 @@ const AppDeslel = forwardRef<
         <canvas key="deskel-default" id="deskel" ref={canvasRef} />
       </div>
 
-      <AppDeskelMeasureToolbar
-        visible={uAppState.tool === "measure"}
-        open={measureToolbarOpen}
-        onToggle={() => setMeasureToolbarOpen((v) => !v)}
-        measureMode={measureMode}
-        setMeasureMode={setMeasureMode}
-        quadMode={quadMode}
-        setQuadMode={setQuadMode}
-        onApplyQuad={() => {
-          void dialog.showConfirmDialog({
-            title: "Quad Apply",
-            body: "now creating",
-          });
-        }}
-      />
-
-      <AppDeskelImageToolbar visible={uAppState.tool === "image"} open={imageToolbarOpen}  onToggle={() => setImageToolbarOpen((v) => !v)} appBackgroundImageCanvasRef={props.appBackgroundImageCanvasRef}/>
       <div
         className={`fixed top-4 right-4 z-9999 items-center gap-2 ${
-          (uAppState.tool === "capture" || uAppState.tool === "color") && isMac
+          isMac
             ? "flex"
             : "hidden"
         }`}
@@ -449,19 +413,6 @@ const AppDeslel = forwardRef<
         </button>
       </div>
 
-      <AppDeskelCaptureToolbar
-       appScreenCaptureCanvasRef={props.appScreenCaptureCanvasRef}
-        visible={uAppState.tool === "capture"}
-        open={captureToolbarOpen}
-        onToggle={() => setCaptureToolbarOpen((v) => !v)}
-        captureMode={uAppState.captureMode as AppDeskelCaptureMode}
-        onChangeCaptureMode={(mode) => {
-          appState.setCaptureMode(mode);
-        }}
-        onClearCaptureImage={() => {
-          appState.setCaptureImage(undefined);
-        }}
-      />
     </>
   );
 });

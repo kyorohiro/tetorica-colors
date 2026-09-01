@@ -9,7 +9,7 @@ import { getAppWindow } from "./native";
   console.log("> updateWindowTitle", appState.getState().clickThrough);
   const title = appState.getState().clickThrough
     ? `Back to normal: ${TOGGLE_CLICK_SHORTCUT}`
-    : "Tetorica Deskel";
+    : "Tetorica Colors";
   console.log(title);
 
   const win = await getAppWindow();

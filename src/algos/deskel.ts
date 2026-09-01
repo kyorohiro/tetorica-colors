@@ -69,18 +69,8 @@ function draw(params: { canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D
   const w = window.innerWidth;
   const h = window.innerHeight;
 
+  // tetorica-colors is a color lens: only the active selection rectangle is drawn.
   params.ctx.clearRect(0, 0, w, h);
-  params.ctx.save();
-  const cx = w / 2
-  const cy = h / 2
-  const rad = (appState.getState().rotation * Math.PI) / 180
-  params.ctx.translate(cx, cy)
-  params.ctx.rotate(rad)
-  params.ctx.translate(-cx, -cy)
-
-  drawGrid({ canvas: params.canvas, ctx: params.ctx, w, h });
-  //drawCross({ canvas: params.canvas, ctx: params.ctx, w, h });
-  params.ctx.restore()
 }
 
 export {

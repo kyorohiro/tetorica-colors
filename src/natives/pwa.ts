@@ -1,6 +1,6 @@
-const PWA_URL = "https://kyorohiro.github.io/tetorica-deskel/demo/";
+const PWA_URL = "https://kyorohiro.github.io/tetorica-colors/demo/";
 const PWA_HOST = "kyorohiro.github.io"
-const PWA_PATH = "/tetorica-deskel/"
+const PWA_PATH = "/tetorica-colors/"
 
 function isPwaDistributionLocation() {
   const host = window.location.hostname;
@@ -133,7 +133,7 @@ async function hardResetPwa() {
     await Promise.all(keys.map((k) => caches.delete(k)));
   }
 
-  window.location.href = "/tetorica-deskel/demo/";
+  window.location.href = "/tetorica-colors/demo/";
 }
 
 function isRunningAsPwa(): boolean {
@@ -161,5 +161,4 @@ export {
   hardResetPwa,
   isRunningAsPwa,
 }
-
 
