@@ -1,1 +1,0 @@
-import"./core-BFHEo1Dm.js";function e(){return window.__TAURI_OS_PLUGIN_INTERNALS__.platform}export{e as platform};

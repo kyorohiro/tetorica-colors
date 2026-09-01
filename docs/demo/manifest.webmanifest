@@ -1,21 +1,21 @@
 {
-  "id": "/tetorica-deskel/demo/",
-  "name": "Tetorica Deskel",
-  "short_name": "Deskel",
-  "description": "Lightweight drawing overlay and analysis tool",
-  "start_url": "/tetorica-deskel/demo/",
-  "scope": "/tetorica-deskel/demo/",
+  "id": "/tetorica-colors/demo/",
+  "name": "Tetorica Colors",
+  "short_name": "Colors",
+  "description": "A color lens for analyzing palettes from your screen or images",
+  "start_url": "/tetorica-colors/demo/",
+  "scope": "/tetorica-colors/demo/",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#0f172a",
   "icons": [
     {
-      "src": "/tetorica-deskel/demo/icon-192x192.png",
+      "src": "/tetorica-colors/demo/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/tetorica-deskel/demo/icon-512x512.png",
+      "src": "/tetorica-colors/demo/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }

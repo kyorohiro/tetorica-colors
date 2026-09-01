@@ -2,9 +2,8 @@ import { forwardRef, RefObject, useImperativeHandle } from "react"
 import { isTauri } from "../../natives/native";
 import { useDialog } from "../utils/useDialog";
 import { AppBackgroundImageCanvasHandle, useBackgroundImageState } from "./AppBackgroundImageCanvas";
-import { isPwaDistributionLocation } from "../../natives/pwa";
-import { getVideo } from "../../natives/nativeWebScreenshot";
 import { appState } from "../../state";
+import { getVideo } from "../../natives/nativeWebScreenshot";
 
 export type AppImportImageHandle = {
     handleImportImage: () => Promise<boolean>;
@@ -39,23 +38,24 @@ export const AppImportImage = forwardRef<AppImportImageHandle,  AppImportImagePr
     };
 
     const handleImportScreen = async () => {
-          if(!isTauri() && !isPwaDistributionLocation()) {
-            // Capture は出来ない
+        // itch.io embeds the web build in a cross-origin iframe, where screen sharing is unavailable.
+        if (window.self !== window.top) {
             await dialog.showConfirmDialog({
-              title: "",
-              body: "Screen sharing is not supported on itch.io. Please use our PWA version instead."
-            })
+                title: "Screen Sharing Unavailable",
+                body: "Screen sharing is not supported inside the itch.io preview. Please open the PWA version instead.",
+            });
             return;
-          }
-          const data = await getVideo();
-          await props.appBackgroundImageCanvasRef!.current!.addVideo(data!);
+        }
+
+        const video = await getVideo();
+        await props.appBackgroundImageCanvasRef?.current?.addVideo(video);
     };
 
     useImperativeHandle(
         ref,
         () => ({
             handleImportImage,
-            handleImportScreen
+            handleImportScreen,
         }),
         []
     );
