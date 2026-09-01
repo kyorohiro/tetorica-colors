@@ -24,6 +24,12 @@ export const AppImportImage = forwardRef<AppImportImageHandle,  AppImportImagePr
         props.onChangeState?.();
     };
 
+    const openPwa = () => {
+        const pwaUrl = "https://kyorohiro.github.io/tetorica-colors/";
+        const pwaWindow = window.open(pwaUrl, "_blank", "noopener");
+        if (!pwaWindow) window.location.assign(pwaUrl);
+    };
+
     const handleImportImage = async (): Promise<boolean> => {
         const ret = await dialog.showFileDialog({});
         if (props.appBackgroundImageCanvasRef?.current) {
@@ -43,6 +49,9 @@ export const AppImportImage = forwardRef<AppImportImageHandle,  AppImportImagePr
             await dialog.showConfirmDialog({
                 title: "Screen Sharing Unavailable",
                 body: "Screen sharing is not supported inside the itch.io preview. Please open the PWA version instead.",
+                cancelText: "Cancel",
+                okText: "Move",
+                onConfirm: openPwa,
             });
             return;
         }

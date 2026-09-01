@@ -501,6 +501,7 @@ export function useDialog() {
         body: React.ReactNode;
         okText?: string;
         cancelText?: string;
+        onConfirm?: () => void;
     };
 
     const showConfirmDialog = useCallback(
@@ -520,7 +521,10 @@ export function useDialog() {
                         </button>
                         <button
                             type="button"
-                            onClick={() => resolve(true)}
+                            onClick={() => {
+                                opts.onConfirm?.();
+                                resolve(true);
+                            }}
                             className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500  text-slate-300"
                         >
                             {opts.okText ?? "OK"}
