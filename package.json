@@ -1,7 +1,7 @@
 {
   "name": "tetorica-colors",
   "private": true,
-  "version": "0.15.4",
+  "version": "0.15.5",
   "type": "module",
   "scripts": {
     "dev": "npm run ensure:wasm && npm run build:marker-data && vite",
@@ -35,6 +35,7 @@
     "three": "^0.183.2"
   },
   "devDependencies": {
+    "@emnapi/runtime": "1.11.3",
     "@tauri-apps/cli": "^2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
