@@ -38,6 +38,8 @@
 
 ## Raw Reference Data
 
+http://blog.paigeedraw.com/2012/07/copic-marker-color-rgb-hex-conversion.html
+
 Marker Code	HEX Code
 0	ffffff
 100	312b2b
