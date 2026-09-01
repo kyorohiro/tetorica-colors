@@ -63,6 +63,14 @@ Web版ではブラウザの制約により、画面の直接分析や常に前�
 - Canvas API
 - Rust image analysis
 
+
+## Ref
+
+Copic Marker Color RGB Hex Conversion Chart
+
+http://blog.paigeedraw.com/2012/07/copic-marker-color-rgb-hex-conversion.html
+
+
 ## License
 
 MIT
