@@ -12,6 +12,7 @@ type RedrawParams = {
   colors: ColorCount[];
   colors01: ColorCount[];
   colorAnalysisMode: AppColorAnalysisMode;
+  markerMode: boolean;
 };
 
 
@@ -79,15 +80,16 @@ function drawColorDots(
   ctx.fill();
 }
 
-function drawRightLegend(ctx: CanvasRenderingContext2D, colors: ColorCount[]) {
-  const legendColors = colors.slice(0, 30);
+function drawRightLegend(ctx: CanvasRenderingContext2D, colors: ColorCount[], markerMode: boolean) {
+  const legendColors = colors.slice(0, markerMode ? 8 : 30);
   const legendX = CHART_SIZE + OPTION_OFFSET_X;
   const legendItemHeight = 26;
   const legendBoxSize = 14;
   const legendPaddingY = 10;
   const legendWidth = 150;
-  const legendHeight =
-    (legendColors.length / 2) * legendItemHeight + legendPaddingY * 2;
+  const legendHeight = markerMode
+    ? legendColors.length * legendItemHeight + legendPaddingY * 2
+    : (legendColors.length / 2) * legendItemHeight + legendPaddingY * 2;
   const legendY = 12;
 
   ctx.strokeStyle = "rgba(255,255,255,0.18)";
@@ -95,8 +97,8 @@ function drawRightLegend(ctx: CanvasRenderingContext2D, colors: ColorCount[]) {
   ctx.strokeRect(legendX, legendY, legendWidth, legendHeight);
 
   legendColors.forEach((color, index) => {
-    const itemY = legendY + legendPaddingY + (index % 10) * legendItemHeight;
-    const chipX = legendX + 8 + Math.floor(index / 10) * 22;
+    const itemY = legendY + legendPaddingY + (markerMode ? index : index % 10) * legendItemHeight;
+    const chipX = legendX + 8 + (markerMode ? 0 : Math.floor(index / 10) * 22);
 
     ctx.fillStyle = color.hex;
     ctx.fillRect(chipX, itemY + 2, legendBoxSize, legendBoxSize);
@@ -104,6 +106,12 @@ function drawRightLegend(ctx: CanvasRenderingContext2D, colors: ColorCount[]) {
     ctx.strokeStyle = "rgba(255,255,255,0.8)";
     ctx.lineWidth = 1;
     ctx.strokeRect(chipX, itemY + 2, legendBoxSize, legendBoxSize);
+
+    if (markerMode && color.markerMatches?.[0]) {
+      ctx.fillStyle = "rgba(255,255,255,0.9)";
+      ctx.font = "11px sans-serif";
+      ctx.fillText(color.markerMatches[0].code, chipX + 22, itemY + 14);
+    }
   });
 }
 
@@ -184,7 +192,7 @@ function drawColorAnalysisChart(
     centerY,
     params.colorAnalysisMode
   );
-  drawRightLegend(ctx, params.colors);
+  drawRightLegend(ctx, params.colors, params.markerMode);
 
   if (params.colors01.length > 0) {
     drawBottomLegend(ctx, params.colors01);

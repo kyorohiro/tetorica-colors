@@ -1,3 +1,10 @@
+export type IllustrationMarkerMatch = {
+  code: string;
+  hex: string;
+  distance: number;
+  approximate: boolean;
+};
+
 export type ColorCount = {
   r: number;
   g: number;
@@ -11,6 +18,7 @@ export type ColorCount = {
   lightness: number;
   hsv_saturation: number;
   value: number;
+  markerMatches?: IllustrationMarkerMatch[];
 };
 
 export type ColorAnalysisResult = {

@@ -26,6 +26,7 @@ const AppColorAnalysis = forwardRef<AppColorAnalysisHandle, {}>(function (_, ref
   const [colorAnalysisMode, setColorAnalysisMode] =
     useState<AppColorAnalysisMode>("hue-saturation");
   const [colorToolbarOpen, setColorToolbarOpen] = useState(true);
+  const [markerMode, setMarkerMode] = useState(false);
 
   const setVisible = useCallback((visible: boolean) => {
     if (!rootRef.current) return;
@@ -40,6 +41,7 @@ const AppColorAnalysis = forwardRef<AppColorAnalysisHandle, {}>(function (_, ref
       colors: props?.colors ?? colorsRef.current.colors,
       colors01: props?.colors01 ?? colorsRef.current.colors01,
       colorAnalysisMode: props?.colorAnalysisMode ?? colorAnalysisMode,
+      markerMode: props?.markerMode ?? markerMode,
     };
     //console.log(">>next", next);
     colorsRef.current = {
@@ -48,7 +50,7 @@ const AppColorAnalysis = forwardRef<AppColorAnalysisHandle, {}>(function (_, ref
     };
 
     drawColorAnalysisChart(canvas, next);
-  }, [colorAnalysisMode]);
+  }, [colorAnalysisMode, markerMode]);
 
   const handleClear = useCallback(() => {
     setVisible(false);
@@ -62,6 +64,11 @@ const AppColorAnalysis = forwardRef<AppColorAnalysisHandle, {}>(function (_, ref
     },
     [redraw]
   );
+
+  const setMarkerModeAndRedraw = useCallback((next: boolean) => {
+    setMarkerMode(next);
+    redraw({ markerMode: next });
+  }, [redraw]);
 
   useImperativeHandle(
     ref,
@@ -100,6 +107,8 @@ const AppColorAnalysis = forwardRef<AppColorAnalysisHandle, {}>(function (_, ref
         colorAnalysisMode={colorAnalysisMode}
         setModeAndRedraw={(v: AppColorAnalysisMode) => setModeAndRedraw(v)}
         colorsRef={colorsRef}
+        markerMode={markerMode}
+        setMarkerMode={setMarkerModeAndRedraw}
         handleClear={() => handleClear()}
       />
     </>

@@ -14,6 +14,8 @@ const AppColorAnalysisToolbar = (props: {
     colors: ColorCount[];
     colors01: ColorCount[];
   }>,
+  markerMode: boolean,
+  setMarkerMode: (value: boolean) => void,
   handleClear: () => void
 }) => {
   const dialog = useDialog();
@@ -37,6 +39,15 @@ const AppColorAnalysisToolbar = (props: {
           aria-label="Lightness"
         >
           Lightness
+        </button>
+
+        <button
+          className={toolbarButtonClass(props.markerMode)}
+          onClick={() => props.setMarkerMode(!props.markerMode)}
+          title="Illustration markers"
+          aria-label="Illustration markers"
+        >
+          Markers
         </button>
 
         <button

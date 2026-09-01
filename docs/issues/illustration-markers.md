@@ -1,46 +1,44 @@
-# Copic Mode
+# Illustration Markers Mode
 
 ## Goal
 
-抽出した各パレット色について、近いCopicカラーを表示するモードを追加する。
+抽出した各パレット色について、近いイラストマーカー参照色を表示するモードを追加する。
 
 表示例:
 
 ```text
-#F27185  ->  R35 Coral / R56 Currant
-#73CFE6  ->  B04 Tahitian Blue / B05 Process Blue
+#F27185  ->  R35 / R56
+#73CFE6  ->  B04 / B05
 ```
 
 ## User Experience
 
-1. 色分析結果のツールバーで `Copic` を有効にする。
-2. 主要色とパレット色の各チップに、近いCopicコードと色名を表示する。
+1. 色分析結果のツールバーで `Markers` を有効にする。
+2. 主要色とパレット色の各チップに、近い参照カラーコードを表示する。
 3. チップを押すと、近い候補を距離順で3件まで確認できる。
-4. Copicモードの結果もPNG / CSV書き出しに含められるようにする。
+4. Markerモードの結果もPNG / CSV書き出しに含められるようにする。
 
 ## Matching
 
-- 比較対象は `code`, `name`, `hex` を持つCopicカラーマスターとする。
+- 比較対象は `code`, `hex` を持つ参照カラーカタログとする。
 - RGBの単純距離ではなく、sRGBをOKLabへ変換した後の距離で順位付けする。
 - もっとも近い1色を基本表示し、上位3色を詳細候補として返す。
-- 距離が大きい色は `approximate` として表示し、Copicの正確な再現色と誤解させない。
+- 距離が大きい色は `approximate` として表示し、マーカーの正確な再現色と誤解させない。
 
 ## Implementation Plan
 
 - WASM color-analysis crateに色空間変換と最近傍検索を追加する。
-- CopicマスターはJSONとして読み込み、Worker内で一度だけOKLab値をキャッシュする。
-- 解析結果の各 `ColorCount` にCopic候補を付与してUIへ返す。
+- 参照カタログはJSONとして読み込み、Worker内で一度だけOKLab値をキャッシュする。
+- 解析結果の各 `ColorCount` にMarker候補を付与してUIへ返す。
 - 色一覧は手入力値をそのまま使わず、HEXの正規化・重複・不正値を検証してからJSON化する。
 
 ## Data Notes
 
-下の一覧は調査用の取り込み元データ。製品名・色名・HEX値の正確性、利用許諾、最新ラインナップは実装前に確認する。
-
-Source: http://blog.paigeedraw.com/2012/07/copic-marker-color-rgb-hex-conversion.html
+下の一覧は調査用の取り込み元データ。HEX値の正確性、利用許諾、最新ラインナップは実装前に確認する。
 
 ## Raw Reference Data
 
-Copic Color	HEX CODE
+Marker Code	HEX Code
 0	ffffff
 100	312b2b
 110	O30708
