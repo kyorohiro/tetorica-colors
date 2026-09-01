@@ -37,10 +37,11 @@ export default function App() {
     })
   }, [])
 
-  const onColorAnalysis = async (colors: ColorCount[], colors01: ColorCount[]): Promise<void> => {
+  const onColorAnalysis = async (colors: ColorCount[], colors01: ColorCount[], markerColors: ColorCount[]): Promise<void> => {
     colorAnalysisRef.current?.redraw({
       colors,
-      colors01
+      colors01,
+      markerColors,
     });
     const colorAnalysis = colorAnalysisRef.current;
     if (colorAnalysis) {

@@ -27,4 +27,5 @@ export type ColorAnalysisResult = {
   total_pixels: number;
   colors: ColorCount[];
   colors01: ColorCount[];
+  markerColors: ColorCount[];
 };

@@ -10,7 +10,7 @@ import { AppColorAnalysisMode, drawColorAnalysisChart, RedrawParams } from "../.
 import { AppColorAnalysisToolbar } from "../toolbar/AppColorAnalysisToolbar";
 
 type AppColorAnalysisHandle = {
-  redraw: (props?: { colors: ColorCount[]; colors01: ColorCount[] }) => void;
+  redraw: (props?: { colors: ColorCount[]; colors01: ColorCount[]; markerColors: ColorCount[] }) => void;
   setVisible: (visible: boolean) => void;
   getCanvas: () => HTMLCanvasElement | null;
 };
@@ -18,9 +18,10 @@ type AppColorAnalysisHandle = {
 const AppColorAnalysis = forwardRef<AppColorAnalysisHandle, {}>(function (_, ref) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const colorsRef = useRef<{ colors: ColorCount[]; colors01: ColorCount[] }>({
+  const colorsRef = useRef<{ colors: ColorCount[]; colors01: ColorCount[]; markerColors: ColorCount[] }>({
     colors: [],
     colors01: [],
+    markerColors: [],
   });
 
   const [colorAnalysisMode, setColorAnalysisMode] =
@@ -40,6 +41,7 @@ const AppColorAnalysis = forwardRef<AppColorAnalysisHandle, {}>(function (_, ref
     const next: RedrawParams = {
       colors: props?.colors ?? colorsRef.current.colors,
       colors01: props?.colors01 ?? colorsRef.current.colors01,
+      markerColors: props?.markerColors ?? colorsRef.current.markerColors,
       colorAnalysisMode: props?.colorAnalysisMode ?? colorAnalysisMode,
       markerMode: props?.markerMode ?? markerMode,
     };
@@ -47,6 +49,7 @@ const AppColorAnalysis = forwardRef<AppColorAnalysisHandle, {}>(function (_, ref
     colorsRef.current = {
       colors: next.colors,
       colors01: next.colors01,
+      markerColors: next.markerColors,
     };
 
     drawColorAnalysisChart(canvas, next);
@@ -73,10 +76,11 @@ const AppColorAnalysis = forwardRef<AppColorAnalysisHandle, {}>(function (_, ref
   useImperativeHandle(
     ref,
     () => ({
-      redraw: (props?: { colors: ColorCount[]; colors01: ColorCount[] }) => {
+      redraw: (props?: { colors: ColorCount[]; colors01: ColorCount[]; markerColors: ColorCount[] }) => {
         redraw({
           colors: props?.colors ?? [],
           colors01: props?.colors01 ?? [],
+          markerColors: props?.markerColors ?? [],
         });
       },
       setVisible,

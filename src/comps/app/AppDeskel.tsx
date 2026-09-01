@@ -43,6 +43,7 @@ const AppDeslel = forwardRef<
     onColorAnalysis?: (
       colors: ColorCount[],
       colors01: ColorCount[],
+      markerColors: ColorCount[],
     ) => Promise<void>;
     onBeforeCapture?: () => Promise<void>;
     appBackgroundImageCanvasRef: RefObject<AppBackgroundImageCanvasHandle | null>;
@@ -185,7 +186,7 @@ const AppDeslel = forwardRef<
       }
 
       const ret = await analyzeColorBlob(cropResult.blob);
-      await props.onColorAnalysis?.(ret.colors, ret.colors01);
+      await props.onColorAnalysis?.(ret.colors, ret.colors01, ret.markerColors);
     },
     [props.appBackgroundImageCanvasRef, props.onColorAnalysis],
   );
@@ -197,7 +198,7 @@ const AppDeslel = forwardRef<
       hideWindow: true,
     });
     const ret = await analyzeColorBlob(new Blob([capture.pngBuffer], { type: "image/png" }));
-    await props.onColorAnalysis?.(ret.colors, ret.colors01);
+    await props.onColorAnalysis?.(ret.colors, ret.colors01, ret.markerColors);
   }, [props.onBeforeCapture, props.onColorAnalysis]);
 
   const setMeasureUnit = useCallback(

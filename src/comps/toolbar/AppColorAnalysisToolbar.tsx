@@ -13,6 +13,7 @@ const AppColorAnalysisToolbar = (props: {
   colorsRef: React.RefObject<{
     colors: ColorCount[];
     colors01: ColorCount[];
+    markerColors: ColorCount[];
   }>,
   markerMode: boolean,
   setMarkerMode: (value: boolean) => void,
