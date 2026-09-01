@@ -122,6 +122,9 @@ function drawMarkerLegend(ctx: CanvasRenderingContext2D, colors: ColorCount[]) {
   const legendWidth = RIGHT_LEGEND_WIDTH;
   const legendHeight = CHART_SIZE;
   const labeledColors = colors.slice(0, 10);
+  const catalogColors = [...colors].sort(
+    (left, right) => (left.markerOrder ?? Number.MAX_SAFE_INTEGER) - (right.markerOrder ?? Number.MAX_SAFE_INTEGER),
+  );
   const chipSize = 7;
   const chipGap = 1;
   const chipColumns = 18;
@@ -149,7 +152,7 @@ function drawMarkerLegend(ctx: CanvasRenderingContext2D, colors: ColorCount[]) {
   });
 
   // Every used marker stays visible here, including colors used in only a small region.
-  colors.forEach((color, index) => {
+  catalogColors.forEach((color, index) => {
     const column = index % chipColumns;
     const row = Math.floor(index / chipColumns);
     const chipX = legendX + 4 + column * (chipSize + chipGap);

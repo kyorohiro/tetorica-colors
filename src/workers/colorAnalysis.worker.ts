@@ -32,8 +32,9 @@ function toOkLab(r: number, g: number, b: number): OkLab {
   };
 }
 
-const markerLabs = ILLUSTRATION_MARKERS.map((marker) => ({
+const markerLabs = ILLUSTRATION_MARKERS.map((marker, order) => ({
   ...marker,
+  order,
   lab: toOkLab(
     Number.parseInt(marker.hex.slice(1, 3), 16),
     Number.parseInt(marker.hex.slice(3, 5), 16),
@@ -81,6 +82,7 @@ function colorFromMarker(marker: typeof markerLabs[number], count: number, total
     hsl_saturation: delta === 0 ? 0 : delta / (1 - Math.abs(2 * lightness - 1)),
     hsv_saturation: max === 0 ? 0 : delta / max,
     value: max,
+    markerOrder: marker.order,
     markerMatches: [{ code: marker.code, hex: marker.hex, distance: 0, approximate: false }],
   };
 }

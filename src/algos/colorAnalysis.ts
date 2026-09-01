@@ -18,6 +18,7 @@ export type ColorCount = {
   lightness: number;
   hsv_saturation: number;
   value: number;
+  markerOrder?: number;
   markerMatches?: IllustrationMarkerMatch[];
 };
 
