@@ -4,6 +4,9 @@
 
 `tetorica-colors` は、透明なウィンドウを他のアプリの上に置き、気になる範囲をドラッグするだけで色を分析します。画像ファイルの読み込みにも対応しています。
 
+- Web: https://kyorohiro.github.io/tetorica-colors/
+- itch.io: https://kyorohiro.itch.io/tetorica-colors
+
 ## Concept
 
 デッサン用グリッドや計測機能は持ちません。色の収集と分析に集中した、軽量なカラーパレットツールです。
