@@ -1,5 +1,5 @@
 import { RefObject, useEffect, useState } from "react";
-import { Image, Menu, MousePointerClick, Pin, X } from "lucide-react";
+import { Image, Menu, MonitorUp, MousePointerClick, Pin, X } from "lucide-react";
 import { appState, useAppState } from "../../state";
 import { setAlwaysOnTop, setClickThrough } from "../../natives/nativeWindow";
 import { isTauri } from "../../natives/native";
@@ -46,13 +46,22 @@ export function AppToolbar(props: {
             <Image size={14} /> Import image
           </button>
           <button
+            className="mb-1 flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-xs hover:bg-slate-800"
+            onClick={() => {
+              setOpen(false);
+              void props.appImportImageRef?.current?.handleImportWindowCapture();
+            }}
+          >
+            <MonitorUp size={14} /> Import window capture
+          </button>
+          <button
             className="mb-2 flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-xs hover:bg-slate-800"
             onClick={() => {
               void props.appBackgroundImageCanvasRef?.current?.clear();
               if (tauriMode) appState.setTarget("screen");
             }}
           >
-            <X size={14} /> Clear image
+            <X size={14} /> {tauriMode ? "Screen capture mode" : "Clear image"}
           </button>
 
           {tauriMode && (

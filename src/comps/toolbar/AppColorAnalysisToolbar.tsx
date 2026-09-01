@@ -58,6 +58,7 @@ const AppColorAnalysisToolbar = (props: {
               dialog,
               colors: props.colorsRef.current.colors,
               colors01: props.colorsRef.current.colors01,
+              markerColors: props.colorsRef.current.markerColors,
             })
           }
           title="Export"

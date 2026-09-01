@@ -25,9 +25,7 @@ async function exportProcreateSwatches(
   paletteName: string,
   colors: ColorCount[]
 ) {
-  const limited = colors.slice(0, 30);
-
-  const swatchColors = limited.map((color) => {
+  const swatchColors = colors.map((color) => {
     const rgb = hexToRgb(color.hex);
     return [rgb, "rgb"] as const;
   });
@@ -109,12 +107,13 @@ function csvEscape(value: string | number) {
 
 async function exportPaletteCsv(colors: ColorCount[]) {
   const lines = [
-    ["index", "hex", "ratio", "hue_angle", "hsv_saturation"]
+    ["index", "marker_code", "hex", "ratio", "hue_angle", "hsv_saturation"]
       .map(csvEscape)
       .join(","),
     ...colors.map((color, index) =>
       [
         index + 1,
+        color.markerMatches?.[0]?.code ?? "",
         color.hex,
         color.ratio,
         color.hue_angle,
@@ -141,6 +140,7 @@ const handleExport = async (params:{
     dialog: UseDialogReturn,
     colors: ColorCount[],
     colors01: ColorCount[],
+    markerColors: ColorCount[],
 }) => {
     console.log("> handleExport");
 
@@ -159,11 +159,21 @@ const handleExport = async (params:{
           label: "Color (Clustering)",
           description: "Export colors based on clustering results.",
         },
+        {
+          value: "illustration-markers",
+          label: "Illustration markers",
+          description: "Export the marker colors selected from the image.",
+        },
       ] : [
         {
           value: "color-count",
           label: "Color (Count)",
           description: "Export colors based on appearance frequency.",
+        },
+        {
+          value: "illustration-markers",
+          label: "Illustration markers",
+          description: "Export the marker colors selected from the image.",
         },
       ],
       cancelText: "Cancel",
@@ -203,7 +213,9 @@ const handleExport = async (params:{
     }
 
     const exportColors =
-      selectedColorType === "color-count"
+      selectedColorType === "illustration-markers"
+        ? params.markerColors
+        : selectedColorType === "color-count"
         ? params.colors
         : params.colors01;
 
@@ -215,7 +227,12 @@ const handleExport = async (params:{
     try {
       switch (selectedFormat) {
         case "procreate-swatches":
-          await exportProcreateSwatches("Deskel Palette", exportColors);
+          await exportProcreateSwatches(
+            selectedColorType === "illustration-markers"
+              ? "Illustration Markers"
+              : "Tetorica Colors Palette",
+            exportColors,
+          );
           break;
         case "png":
           await exportPalettePng(exportColors);

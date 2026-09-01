@@ -7,7 +7,7 @@ import { getVideo } from "../../natives/nativeWebScreenshot";
 
 export type AppImportImageHandle = {
     handleImportImage: () => Promise<boolean>;
-    handleImportScreen: () => Promise<void>;
+    handleImportWindowCapture: () => Promise<void>;
 };
 
 type AppImportImageProps = {
@@ -43,7 +43,7 @@ export const AppImportImage = forwardRef<AppImportImageHandle,  AppImportImagePr
         return false;
     };
 
-    const handleImportScreen = async () => {
+    const handleImportWindowCapture = async () => {
         // itch.io embeds the web build in a cross-origin iframe, where screen sharing is unavailable.
         if (window.self !== window.top) {
             await dialog.showConfirmDialog({
@@ -58,13 +58,15 @@ export const AppImportImage = forwardRef<AppImportImageHandle,  AppImportImagePr
 
         const video = await getVideo();
         await props.appBackgroundImageCanvasRef?.current?.addVideo(video);
+        appState.setTarget("image");
+        syncBackgroundImageState();
     };
 
     useImperativeHandle(
         ref,
         () => ({
             handleImportImage,
-            handleImportScreen,
+            handleImportWindowCapture,
         }),
         []
     );
@@ -87,10 +89,10 @@ export const AppImportImage = forwardRef<AppImportImageHandle,  AppImportImagePr
                             Import Image
                         </button>
                         <button
-                            onClick={handleImportScreen}
+                            onClick={handleImportWindowCapture}
                             className="rounded-xl border border-sky-400 bg-sky-700 px-5 py-2 text-sm font-medium text-white shadow transition hover:bg-sky-600"
                         >
-                            Import Screen
+                            Import window capture
                         </button>
                     </div>
                 </div>
