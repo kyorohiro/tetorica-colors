@@ -1,7 +1,7 @@
 {
   "name": "tetorica-colors",
   "private": true,
-  "version": "0.15.7",
+  "version": "0.16.1",
   "type": "module",
   "scripts": {
     "dev": "npm run ensure:wasm && npm run build:marker-data && vite",

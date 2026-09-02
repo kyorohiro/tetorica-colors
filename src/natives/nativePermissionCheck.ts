@@ -5,6 +5,10 @@ const hasPermission = async (): Promise<boolean> => {
   return hasPermission;
 }
 
+const requestScreenCapturePermission = async (): Promise<boolean> => {
+  return await invoke<boolean>("request_screen_capture_permission");
+};
+
 const openPrivacySettings = async () => {
   // 画面収録の設定画面を直接開くURLスキーム
   await await invoke("open_privacy_settings");
@@ -70,6 +74,7 @@ async function ensureScreenCapturePermission(props: { showToast: (msg: string) =
 }
 export {
   hasPermission,
+  requestScreenCapturePermission,
   openPrivacySettings,
   canCaptureForeignWindow,
   probePermission,

@@ -36,7 +36,7 @@ export function AppToolbar(props: {
       {open && (
         <div className="mt-2 w-52 rounded-xl border border-white/15 bg-slate-950/90 p-2 shadow-2xl backdrop-blur">
           <p className="px-2 pb-2 text-xs leading-5 text-slate-300">
-            Drag over a color area to analyze it.
+            Drag to analyze an area. Double-click to sample a 6 x 6 pixel area.
           </p>
 
           <button

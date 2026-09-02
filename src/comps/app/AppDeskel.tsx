@@ -15,7 +15,11 @@ import {
 } from "../../natives/nativeScreenshot";
 import { showToast } from "../utils/toast";
 import { useDialog } from "../utils/useDialog";
-import { openPrivacySettings } from "../../natives/nativePermissionCheck";
+import {
+  hasPermission,
+  openPrivacySettings,
+  requestScreenCapturePermission,
+} from "../../natives/nativePermissionCheck";
 import { getRectFromPoints } from "../../algos/utils";
 import { getTaurPlatformInfo } from "../../natives/native";
 import { AppBackgroundImageCanvasHandle } from "./AppBackgroundImageCanvas";
@@ -30,6 +34,8 @@ import type {
   SelectionRect,
 } from "./appDeskelImpl/DeskelToolHandler";
 import { ColorHandler } from "./appDeskelImpl/ColorHandler";
+
+const QUICK_SAMPLE_SIZE = 6;
 
 type AppDeskelHandle = {
   redraw: (props?: { isResizeCanvas: boolean }) => void;
@@ -94,12 +100,14 @@ const AppDeslel = forwardRef<
 
   const handleHelpMac = useCallback(async () => {
     const result = await dialog.showConfirmDialog({
-      title: "Screen Capture Reset Required",
+      title: "Screen Capture Permission Help",
       body:
-        "Please go to Settings -> Privacy & Security -> Screen Recording & System Audio.\n\n" +
-        "IMPORTANT: You must select 'tetorica-colors' and click the '-' (minus) button to remove it first, then click '+' to add it back.\n\n" +
-        "Simply toggling it Off and On will NOT work.\r\n" +
-        "Move to settings now?",
+        "macOS requires Screen Recording permission to analyze colors from other apps. Tetorica Colors captures only the area you drag and never uploads your screen.\n\n" +
+        "The itch.io build is not code-signed, so macOS can occasionally treat an updated download as a different app. If screen capture stops working after an update, grant permission again for the current Tetorica Colors app.\n\n" +
+        "Go to Settings -> Privacy & Security -> Screen Recording & System Audio. Remove the old 'tetorica-colors' entry with '-' and add the current app again with '+'.\n\n" +
+        "Open System Settings now?",
+      cancelText: "Not now",
+      okText: "Open System Settings",
     });
     if (result) {
       await openPrivacySettings();
@@ -172,7 +180,7 @@ const AppDeslel = forwardRef<
   }, []);
 
   const analyzeFromImage = useCallback(
-    async (selectedRect: SelectionRect) => {
+    async (selectedRect: SelectionRect, options?: { maxSize: number; quantizeStep: number; topN: number }) => {
       const cropResult = await props.appBackgroundImageCanvasRef.current?.getCropImage({
         x: selectedRect.x,
         y: selectedRect.y,
@@ -185,21 +193,60 @@ const AppDeslel = forwardRef<
         return;
       }
 
-      const ret = await analyzeColorBlob(cropResult.blob);
+      const ret = await analyzeColorBlob(cropResult.blob, options);
       await props.onColorAnalysis?.(ret.colors, ret.colors01, ret.markerColors);
     },
     [props.appBackgroundImageCanvasRef, props.onColorAnalysis],
   );
 
-  const analyzeFromScreen = useCallback(async (selectedRect: SelectionRect) => {
+  const analyzeFromScreen = useCallback(async (selectedRect: SelectionRect, options?: { maxSize: number; quantizeStep: number; topN: number }) => {
+    if (isMac && !(await hasPermission())) {
+      const allowCapture = await dialog.showConfirmDialog({
+        title: "Allow Screen Recording",
+        body:
+          "To analyze colors from other apps, Tetorica Colors needs macOS Screen Recording permission.\n\n" +
+          "It captures only the area you drag for color analysis. Your screen is never uploaded.",
+        cancelText: "Not now",
+        okText: "Allow Screen Recording",
+      });
+
+      if (!allowCapture) {
+        return;
+      }
+
+      await requestScreenCapturePermission();
+
+      if (!(await hasPermission())) {
+        showToast("Allow Screen Recording in System Settings, then try again.");
+        await openPrivacySettings();
+        return;
+      }
+    }
+
     await props.onBeforeCapture?.();
     const capture = await captureAndCrop({
       targetRect: selectedRect,
       hideWindow: true,
     });
-    const ret = await analyzeColorBlob(new Blob([capture.pngBuffer], { type: "image/png" }));
+    const ret = await analyzeColorBlob(new Blob([capture.pngBuffer], { type: "image/png" }), options);
     await props.onColorAnalysis?.(ret.colors, ret.colors01, ret.markerColors);
-  }, [props.onBeforeCapture, props.onColorAnalysis]);
+  }, [dialog, isMac, props.onBeforeCapture, props.onColorAnalysis]);
+
+  const analyzeNearPoint = useCallback(async (point: AppDeskelPoint) => {
+    const selectedRect = {
+      x: Math.max(0, Math.min(window.innerWidth - QUICK_SAMPLE_SIZE, Math.round(point.x) - 3)),
+      y: Math.max(0, Math.min(window.innerHeight - QUICK_SAMPLE_SIZE, Math.round(point.y) - 3)),
+      width: QUICK_SAMPLE_SIZE,
+      height: QUICK_SAMPLE_SIZE,
+    };
+    const options = { maxSize: QUICK_SAMPLE_SIZE, quantizeStep: 1, topN: QUICK_SAMPLE_SIZE * QUICK_SAMPLE_SIZE };
+
+    if (uAppState.target === "image") {
+      await analyzeFromImage(selectedRect, options);
+    } else {
+      await analyzeFromScreen(selectedRect, options);
+    }
+  }, [analyzeFromImage, analyzeFromScreen, uAppState.target]);
 
   const setMeasureUnit = useCallback(
     (pixelsPerUnit: number, start: AppDeskelPoint, end: AppDeskelPoint) => {
@@ -353,6 +400,13 @@ const AppDeslel = forwardRef<
     canvas.addEventListener("pointermove", onPointerMove);
     canvas.addEventListener("pointerup", onPointerUp);
     canvas.addEventListener("pointercancel", onPointerCancel);
+    const onDoubleClick = (e: MouseEvent) => {
+      void analyzeNearPoint(getPoint(e as PointerEvent)).catch((err) => {
+        console.error(err);
+        showToast(err instanceof Error ? err.message : String(err));
+      });
+    };
+    canvas.addEventListener("dblclick", onDoubleClick);
 
     redraw({ isResizeCanvas: true });
 
@@ -361,8 +415,9 @@ const AppDeslel = forwardRef<
       canvas.removeEventListener("pointermove", onPointerMove);
       canvas.removeEventListener("pointerup", onPointerUp);
       canvas.removeEventListener("pointercancel", onPointerCancel);
+      canvas.removeEventListener("dblclick", onDoubleClick);
     };
-  }, [createToolContext, getCurrentHandler, redraw]);
+  }, [analyzeNearPoint, createToolContext, getCurrentHandler, getPoint, redraw]);
 
   useEffect(() => {
     const handleResize = () => {
