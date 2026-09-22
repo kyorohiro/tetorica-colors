@@ -23,7 +23,7 @@ export function AppToolbar(props: {
   }, [state, props]);
 
   return (
-    <div className="absolute left-3 top-3 z-[99999] text-white">
+    <div hidden={state.clickThrough} className="absolute left-3 top-3 z-[99999] text-white">
       <button
         onClick={() => setOpen((value) => !value)}
         className="flex items-center gap-2 rounded-xl border border-white/15 bg-black/65 px-3 py-2 text-xs shadow-lg backdrop-blur"

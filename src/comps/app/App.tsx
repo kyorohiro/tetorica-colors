@@ -70,7 +70,9 @@ export default function App() {
       off = unlisten;
     };
 
-    setupTauriOnly();
+    setupTauriOnly().catch((error) => {
+      console.error("Failed to initialize native window", error);
+    });
 
     //initToolbar();
     //showToolbar();

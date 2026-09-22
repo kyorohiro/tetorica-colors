@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { useAppState } from "../state";
 
 const modeButtonBase =
   "flex items-center gap-2 rounded-2xl border px-2 py-2 m-0.5 text-xs transition-colors outline-none";
@@ -36,12 +37,14 @@ function SubToolbar(props: {
   hidden: boolean;
   children: ReactNode;
 }) {
+  const { clickThrough } = useAppState();
+  const hidden = props.hidden || clickThrough;
   return (
     <div
       className={`fixed bottom-4 right-4 z-9999 items-end gap-2 ${
-        props.hidden ? "hidden" : "flex"
+        hidden ? "hidden" : "flex"
       } ${
-        props.hidden ? "pointer-events-none" : "pointer-events-auto" }
+        hidden ? "pointer-events-none" : "pointer-events-auto" }
       }`}
     >
       <button
