@@ -1,4 +1,4 @@
-const APP_VERSION = "0.16.2";
+const APP_VERSION = "0.16.3";
 const CACHE_PREFIX = "tetorica-colors-";
 const CACHE_NAME = `${CACHE_PREFIX}${APP_VERSION}`;
 
